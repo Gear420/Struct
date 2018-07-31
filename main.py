@@ -1,7 +1,6 @@
 # coding=UTF-8
 
-
-
+from UI import ui
 
 
 if __name__ == "__main__":
