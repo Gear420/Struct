@@ -13,17 +13,17 @@ class ui(object):
         self.n = n
         pygame.init()
         self._clock = pygame.time.Clock()
-        self.screen = pygame.display.set_mode([self.SCREEN_WIDTH, self.SCREEN_HEIGHT])
+        self.screen = pygame.display.set_mode([self.SCREEN_WIDTH, self.SCREEN_HEIGHT],)
         pygame.display.set_caption('v0.1')
 
-
     def load_set_images(self):
-        #self.background = pygame.image.load()
+        self.background = pygame.image.load('images/background.png')
+        self.screen.blit(self.background,[0,0])
+
+
         self.zhidao_image = pygame.image.load('images/1.jpg')
         zwidth = (int)(self.zhidao_image.get_width()*1.43/self.n)
-        print(zwidth)
         zheight = (int)(self.zhidao_image.get_height()*1.43/self.n)
-        print(zheight)
         self.zhidao_image = pygame.transform.scale(self.zhidao_image,(zwidth,zheight))
         self.screen.blit(self.zhidao_image,[16/375*self.SCREEN_WIDTH,189/667*self.SCREEN_HEIGHT])
 
@@ -43,17 +43,28 @@ class ui(object):
         self.baogao_image = pygame.image.load('images/4.jpg')
         width = (int)(self.baogao_image.get_width()*1.44/self.n)
         height = (int)(self.baogao_image.get_height()*1.44/self.n)
-        self.zhidao_image = pygame.transform.scale(self.baogao_image,(width,height))
-        self.screen.blit(self.zhidao_image,[16,189])
+        self.baogao_image = pygame.transform.scale(self.baogao_image,(width,height))
+        self.screen.blit(self.baogao_image,[192/375 * self.SCREEN_WIDTH,361/667 *self.SCREEN_HEIGHT])
 
         self.logo_image = pygame.image.load('images/logo.png')
+        width = (int)(41 * 2 * 2 / self.n)
+        height = (int)(37 * 2 * 2 / self.n)
+        self.logo_image = pygame.transform.scale(self.logo_image,(width,height))
+        self.screen.blit(self.logo_image,[172/375* self.SCREEN_WIDTH,44/667 * self.SCREEN_HEIGHT])
 
     def set_kinect(self):
         #self._kinect = PyKinectRuntime.PyKinectRuntime(PyKinectV2.FrameSourceTypes_Color | PyKinectV2.FrameSourceTypes_Body)
         pass
+    def change_mode(self,pos):
+        return True
+
     def run(self):
-        self.load_set_images()
         while True:
+            self.load_set_images()
+            if self.change_mode(pygame.mouse.get_pos()):
+                print("success")
+            else:
+                pass
             pygame.display.update()
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
