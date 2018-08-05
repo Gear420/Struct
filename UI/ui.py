@@ -56,13 +56,15 @@ class ui(object):
         #self._kinect = PyKinectRuntime.PyKinectRuntime(PyKinectV2.FrameSourceTypes_Color | PyKinectV2.FrameSourceTypes_Body)
         pass
     def change_mode(self,pos):
+        if pos
         return True
 
     def run(self):
         while True:
             self.load_set_images()
+
             if self.change_mode(pygame.mouse.get_pos()):
-                print("success")
+
             else:
                 pass
             pygame.display.update()
