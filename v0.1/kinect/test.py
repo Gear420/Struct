@@ -25,11 +25,13 @@ class dumbbell(object):
         self.time = init_time * self.hz
         self.status = 0
         self.counts = 0
+
         self.font = pygame.font.SysFont("SimHei",28)
         self.eng_font = pygame.font.SysFont("consolas",30)
         self.dig_font = pygame.font.Font("dig.TTF",105)
         self.dig_big_font = pygame.font.Font("dig.TTF",150)
         self.count_font = pygame.font.Font("count.ttf",150)
+
         self._infoObject = pygame.display.Info()
         self._screen = pygame.display.set_mode((self._infoObject.current_w >> 1, self._infoObject.current_h >> 1),
                                                pygame.HWSURFACE|pygame.DOUBLEBUF|pygame.RESIZABLE, 32)
@@ -229,5 +231,6 @@ class dumbbell(object):
         self._kinect.close()
         pygame.quit()
 
-
-
+if __name__ == "__main__":
+    g = dumbbell(60,687)
+    g.run()

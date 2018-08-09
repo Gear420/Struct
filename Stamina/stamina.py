@@ -1,9 +1,8 @@
-from pykinect2 import PyKinectV2
-from pykinect2.PyKinectV2 import *
-from pykinect2 import PyKinectRuntime
-import os
-import ctypes
+from KinectTools import PyKinectV2
+from KinectTools.PyKinectV2 import *
+from KinectTools import PyKinectRuntime
 import math
+import ctypes
 import _ctypes
 import pygame
 import sys
@@ -13,60 +12,45 @@ if sys.hexversion >= 0x03000000:
 else:
     import thread
 
-# colors for drawing different bodies
-SKELETON_COLORS = [pygame.color.THECOLORS["red"],
-                   pygame.color.THECOLORS["blue"],
-                   pygame.color.THECOLORS["green"],
-                   pygame.color.THECOLORS["orange"],
-                   pygame.color.THECOLORS["purple"],
-                   pygame.color.THECOLORS["yellow"],
-                   pygame.color.THECOLORS["violet"]]
+# colors for drawing different bodies 
 
 
-class dumbbell(object):
-    def __init__(self):
-        pygame.init()
-
-        self.status = 0
-        self.counts = 0
-        self.font = pygame.font.SysFont("SimSun", 150)
-        self.font_height = self.font.get_height()
-        self.num_font = pygame.font.SysFont("SimHei", 170)
-        self.cn_font = pygame.font.SysFont("SimHei", 32)
-        # Used to manage how fast the screen updates
+class stamina(object):
+    def __init__(self,screen,n):
+        self.SKELETON_COLORS = [pygame.color.THECOLORS["red"],
+                           pygame.color.THECOLORS["blue"],
+                           pygame.color.THECOLORS["green"],
+                           pygame.color.THECOLORS["orange"],
+                           pygame.color.THECOLORS["purple"],
+                           pygame.color.THECOLORS["yellow"],
+                           pygame.color.THECOLORS["violet"]]
         self._clock = pygame.time.Clock()
-
-        # Set the width and height of the screen [width, height]
         self._infoObject = pygame.display.Info()
-
-        print(self._infoObject)
-
-        self._screen = pygame.display.set_mode((self._infoObject.current_w >> 1, self._infoObject.current_h >> 1),
-                                               pygame.HWSURFACE | pygame.DOUBLEBUF | pygame.RESIZABLE, 32)
-        print(self._screen)
-        # Loop until the user clicks the close button.
-
-        pygame.display.set_caption("Window")
-
+        self.screen = screen
+        self.n = n
         self._done = False
 
-        # Used to manage how fast the screen updates
-        self._clock = pygame.time.Clock()
 
-        # Kinect runtime object, we want only color and body frames
+        self.status=0
+        self.counts = 0
+
+
+        #about fonts
+        self.font = pygame.font.SysFont("SimHei",28)
+        self.eng_font = pygame.font.SysFont("consolas",30)
+        self.dig_font = pygame.font.Font("dig.TTF",105)
+        self.dig_big_font = pygame.font.Font("dig.TTF",150)
+        self.count_font = pygame.font.Font("count.ttf",150)
+
+
+
+        self._clock = pygame.time.Clock()
         self._kinect = PyKinectRuntime.PyKinectRuntime(
             PyKinectV2.FrameSourceTypes_Color | PyKinectV2.FrameSourceTypes_Body)
-
-        # back buffer surface for getting Kinect color frames, 32bit color, width and height equal to the Kinect color frame size
         self._frame_surface = pygame.Surface(
             (self._kinect.color_frame_desc.Width, self._kinect.color_frame_desc.Height), 0, 32)
 
-        print(self._kinect.color_frame_desc.Width)
-        print(self._kinect.color_frame_desc.Height)
 
-        print(self._frame_surface)
-
-        # here we will store skeleton data
         self._bodies = None
 
     def draw_body_bone(self, joints, jointPoints, color, joint0, joint1):
@@ -137,6 +121,19 @@ class dumbbell(object):
         self.draw_body_bone(joints, jointPoints, color, PyKinectV2.JointType_KneeLeft, PyKinectV2.JointType_AnkleLeft);
         self.draw_body_bone(joints, jointPoints, color, PyKinectV2.JointType_AnkleLeft, PyKinectV2.JointType_FootLeft);
 
+
+
+
+    def draw_ui(self):
+
+        self._frame_surface.set_clip(740, 821, 740, 960)
+        self._frame_surface.fill((30,30,30))
+        self._frame_surface.set_clip()
+        self._frame_surface.blit(self.font.render("肱二头肌训练", True, (250, 202, 46, 0.3)),
+                                 (int(266/375*540 +740), int(634/667 * 960)))
+    def draw_time(self,time):
+        pass
+
     def draw_color_frame(self, frame, target_surface):
         target_surface.lock()
         address = self._kinect.surface_as_array(target_surface.get_buffer())
@@ -144,23 +141,18 @@ class dumbbell(object):
         del address
         target_surface.unlock()
 
-    def calc_angel(self, joint0, joint1, joint2):
-        # todo
+
+    def calc_angel(self,joint0,joint1,joint2):
         v1_x = joint1.x - joint0.x
         v1_y = joint1.y - joint0.y
-        # v1_z = joint1.z - joint0.z
         v2_x = joint1.x - joint2.x
         v2_y = joint1.y - joint2.y
-        # v2_z = joint1.z - joint2.z
-        angel = (math.acos((v1_x * v2_x + v1_y * v2_y) / (
-        (((v1_x ** 2.0) + (v1_y ** 2.0)) ** 0.5) * (((v2_x ** 2.0) + (v2_y ** 2.0)) ** 0.5)))) * (180 / math.pi)
+        angel=(math.acos((v1_x*v2_x+v1_y*v2_y)/((((v1_x**2.0)+(v1_y**2.0))**0.5)*(((v2_x**2.0)+(v2_y**2.0))**0.5)))) * (180/math.pi)
         return angel
 
     def calc_sports_counts(self, jointl0, jointl1, jointl2, jointr0, jointr1, jointr2):
-        # todo
         angel_l = self.calc_angel(jointl0, jointl1, jointl2)
         angel_r = self.calc_angel(jointr0, jointr1, jointr2)
-
         if angel_l < 160 and angel_r < 160:
             self.status = 0
         elif self.status == 0:
@@ -168,38 +160,46 @@ class dumbbell(object):
             return 1
         return 0
 
-    def draw_angel_text(self, joint0, joint1, joint2):
-        # todo
-
-        angel = self.calc_angel(joint0, joint1, joint2)
-        angel = (int)(angel)
-        angel = (str)(angel)
-
-        self._frame_surface.blit(self.font.render(angel, True, (250, 202, 46)), (joint1.x, joint1.y))
-
     def draw_counts_text(self, jointl0, jointl1, jointl2, jointr0, jointr1, jointr2):
-        # todo
-
         self.counts = self.counts + self.calc_sports_counts(jointl0, jointl1, jointl2, jointr0, jointr1, jointr2)
         counts = (str)(self.counts)
+        self._frame_surface.blit(self.count_font.render(counts, True, (0,199,140)),
+                                 (int(18/375*540 + 740),int(607/667 * 960)))
 
-        self._frame_surface.blit(self.font.render(counts, True, (216, 0, 102)), (690, self.font_height))
+    def draw_angel_text(self,joint0,joint1,joint2,jointr0,jointr1,jointr2):
+        angell = self.calc_angel(joint0,joint1,joint2)
+        angell = (int)(angell)
+        angell = angell - 80
+        if angell > 85:
+            angell = (str)(angell)
+            self._frame_surface.blit(self.dig_font.render(angell, True, (0,201,87)), (joint1.x,joint1.y))
+        else:
+            angell = (str)(angell)
+            self._frame_surface.blit(self.dig_font.render(angell,True,(255,255,255)),(joint1.x,joint1.y))
 
-    def draw_ui(self):
+        angelr = self.calc_angel(jointr0,jointr1,jointr2)
+        angelr = (int)(angelr)
+        angelr = angelr - 80
+        if angelr > 85:
+            angelr = (str)(angelr)
+            self._frame_surface.blit(self.dig_font.render(angelr, True, (0,201,87)), (jointr1.x,jointr1.y))
+        else:
+            angelr = (str)(angelr)
+            self._frame_surface.blit(self.dig_font.render(angelr,True,(255,255,255)),(jointr1.x,jointr1.y))
 
-        self._frame_surface.set_clip(640, 0, 500, 10)
-        self._frame_surface.fill((0, 56, 126))
-        self._frame_surface.set_clip(1140, 0, 640, 10)
-        self._frame_surface.fill((250, 202, 46))
-        self._frame_surface.set_clip(640, 10, 640, 270)
-        self._frame_surface.fill((117, 207, 219))
 
 
 
-        # self.ui_surface.fill(0,0,200)
+    def runc(self):
+        if self._kinect.has_new_color_frame():
+            frame = self._kinect.get_last_color_frame()
+            self.draw_color_frame(frame, self._frame_surface)
+            frame = None
 
+
+    def guide(self):
+        pass
     def run(self):
-        # -------- Main Program Loop -----------
         while not self._done:
             # --- Main event loop
             for event in pygame.event.get():  # User did something
@@ -210,96 +210,61 @@ class dumbbell(object):
                     self._screen = pygame.display.set_mode(event.dict['size'],
                                                            pygame.HWSURFACE | pygame.DOUBLEBUF | pygame.RESIZABLE, 32)
 
-            # --- Game logic should go here
-
-
-
             if self._kinect.has_new_color_frame():
                 frame = self._kinect.get_last_color_frame()
                 self.draw_color_frame(frame, self._frame_surface)
                 frame = None
 
+            # --- Cool! We have a body frame, so can get skeletons
             if self._kinect.has_new_body_frame():
                 self._bodies = self._kinect.get_last_body_frame()
 
             self.draw_ui()
-
-            # print(self._bodies)
             # --- draw skeletons to _frame_surface
             if self._bodies is not None:
-
-                # print("max_body_counts:")
-                # self._kinect.max_body_count = 6
-                # print(self._kinect.max_body_count)
                 for i in range(0, self._kinect.max_body_count):
                     body = self._bodies.bodies[i]
-
-                    # print(body.is_tracked)
-
                     if not body.is_tracked:
                         continue
 
                     joints = body.joints
                     # convert joint coordinates to color space
                     joint_points = self._kinect.body_joints_to_color_space(joints)
-                    # print(joint_points[PyKinectV2.JointType_SpineShoulder].x,joint_points[PyKinectV2.JointType_SpineShoulder].y)
-                    # print(joint_points[PyKinectV2.JointType_ShoulderRight].x,joint_points[PyKinectV2.JointType_ShoulderRight].y)
-                    # print(joint_points[PyKinectV2.JointType_ElbowRight].x,joint_points[PyKinectV2.JointType_ElbowRight].y)
-                    # self._frame_surface.blit(self.font.render(, True, (0, 0, 0), (0, 0, 255)), (0, 0))
-                    self.draw_body(joints, joint_points, SKELETON_COLORS[i])
-
+                    self.draw_body(joints, joint_points, self.SKELETON_COLORS[i])
                     self.draw_angel_text(joint_points[PyKinectV2.JointType_SpineShoulder],
                                          joint_points[PyKinectV2.JointType_ShoulderRight],
-                                         joint_points[PyKinectV2.JointType_ElbowRight])
+                                         joint_points[PyKinectV2.JointType_ElbowRight],
+                                         joint_points[PyKinectV2.JointType_SpineShoulder],
+                                         joint_points[PyKinectV2.JointType_ShoulderLeft],
+                                         joint_points[PyKinectV2.JointType_ElbowLeft])
 
                     self.draw_counts_text(joint_points[PyKinectV2.JointType_SpineShoulder],
                                           joint_points[PyKinectV2.JointType_ShoulderRight],
                                           joint_points[PyKinectV2.JointType_ElbowRight],
                                           joint_points[PyKinectV2.JointType_SpineShoulder],
                                           joint_points[PyKinectV2.JointType_ShoulderLeft],
-                                          joint_points[PyKinectV2.JointType_ElbowRight])
-
-
-                    # self.draw_ui()
-
-            # --- copy back buffer surface pixels to the screen, resize it if needed and keep aspect ratio
-            # # --- (screen size may be different from Kinect's color frame size)
+                                          joint_points[PyKinectV2.JointType_ElbowLeft])
 
 
 
-            # print(self._frame_surface.get_height())
-
-            # print(self._frame_surface.get_height()) #1080
-            # print(self._frame_surface.get_width())  #1920
+            rect = (740, 0, int(1080/2), int(1920 /2))
 
 
-            h_to_w = float(self._frame_surface.get_height()) / self._frame_surface.get_width()
-
-            print(h_to_w)
-
-            target_height = int(h_to_w * self._screen.get_width())
-
-            print(target_height)
-
-            pygame.draw.rect(self._frame_surface, (0, 0, 0), (0, 0, 640, 1080))
-            pygame.draw.rect(self._frame_surface, (0, 0, 0), (1280, 0, 1920, 1080))
-
-            surface_to_draw = pygame.transform.scale(self._frame_surface, (self._screen.get_width(), target_height));
-
-            self._screen.blit(surface_to_draw, (0, 0))
-
+            surface_to_draw = pygame.Surface.subsurface(self._frame_surface, rect)
+            surface_to_draw = pygame.transform.scale(surface_to_draw, (1080, 1920))
+            self.screen.blit(surface_to_draw, (0, 0))
             surface_to_draw = None
+
+
+
+            self.guide()
+            self.runc()
+
+
+
 
             pygame.display.update()
 
-            # --- Go ahead and update the screen with what we've drawn.
-            # pygame.display.flip()
-
             self._clock.tick(60)
-
-        # Close our Kinect sensor, close the window and quit.
-        self._kinect.close()
-        pygame.quit()
-
 
 

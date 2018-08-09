@@ -1,24 +1,25 @@
 import pygame
 from sys import exit
-#from KinectTools import PyKinectRuntime
-#from KinectTools import PyKinectV2
+from KinectTools import PyKinectRuntime
+from KinectTools import PyKinectV2
 import ctypes
+from Stamina.stamina import stamina
 
 
 class ui(object):
     def __init__(self,n):
         self.SCREEN_WIDTH=(int)(1080 / n)
         self.SCREEN_HEIGHT=(int)(1920 / n)
-        print(self.SCREEN_WIDTH)
         self.n = n
+
         pygame.init()
         self._clock = pygame.time.Clock()
-        self.screen = pygame.display.set_mode([self.SCREEN_WIDTH, self.SCREEN_HEIGHT],)
+        self.screen = pygame.display.set_mode([self.SCREEN_WIDTH, self.SCREEN_HEIGHT])
         pygame.display.set_caption('v0.1')
 
     def load_set_images(self):
-        self.background = pygame.image.load('images/background.png')
-        self.screen.blit(self.background,[0,0])
+        self.background = pygame.Surface((1080,1920))
+        self.background.fill((255,255,255))
 
 
         self.zhidao_image = pygame.image.load('images/1.jpg')
@@ -51,23 +52,36 @@ class ui(object):
         height = (int)(37 * 2 * 2 / self.n)
         self.logo_image = pygame.transform.scale(self.logo_image,(width,height))
         self.screen.blit(self.logo_image,[172/375* self.SCREEN_WIDTH,44/667 * self.SCREEN_HEIGHT])
-
-    def set_kinect(self):
-        #self._kinect = PyKinectRuntime.PyKinectRuntime(PyKinectV2.FrameSourceTypes_Color | PyKinectV2.FrameSourceTypes_Body)
-        pass
     def change_mode(self,pos):
-        if pos
-        return True
+        return 2
+        for event in pygame.event.get():
+            print(event)
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                eventarray = pygame.mouse.get_pos()
+                return 2
+
 
     def run(self):
+
+        self.load_set_images()
         while True:
-            self.load_set_images()
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    exit()
 
-            if self.change_mode(pygame.mouse.get_pos()):
 
+
+
+            if self.change_mode(pygame.mouse.get_pos()) == 2:
+                pass
+                c = stamina(self.screen,self.n)
+                c.run()
             else:
                 pass
+
             pygame.display.update()
+
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()

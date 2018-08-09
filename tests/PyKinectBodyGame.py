@@ -31,9 +31,10 @@ class BodyGameRuntime(object):
 
         # Set the width and height of the screen [width, height]
         self._infoObject = pygame.display.Info()
-        self._screen = pygame.display.set_mode((self._infoObject.current_w >> 1, self._infoObject.current_h >> 1), 
-                                               pygame.HWSURFACE|pygame.DOUBLEBUF|pygame.RESIZABLE, 32)
+        self._screen = pygame.display.set_mode((540,960))
 
+        print(self._infoObject)
+        print(self._screen)
         pygame.display.set_caption("Kinect for Windows v2 Body Game")
 
         # Loop until the user clicks the close button.
@@ -48,6 +49,7 @@ class BodyGameRuntime(object):
         # back buffer surface for getting Kinect color frames, 32bit color, width and height equal to the Kinect color frame size
         self._frame_surface = pygame.Surface((self._kinect.color_frame_desc.Width, self._kinect.color_frame_desc.Height), 0, 32)
 
+        print(self._frame_surface)
         # here we will store skeleton data 
         self._bodies = None
 
@@ -156,7 +158,9 @@ class BodyGameRuntime(object):
             # --- (screen size may be different from Kinect's color frame size) 
             h_to_w = float(self._frame_surface.get_height()) / self._frame_surface.get_width()
             target_height = int(h_to_w * self._screen.get_width())
-            surface_to_draw = pygame.transform.scale(self._frame_surface, (self._screen.get_width(), target_height));
+            rect = (740,0,540,960)
+            wid = int(self._screen.get_width() / 2)
+            surface_to_draw = pygame.Surface.subsurface(self._frame_surface,rect)
             self._screen.blit(surface_to_draw, (0,0))
             surface_to_draw = None
             pygame.display.update()

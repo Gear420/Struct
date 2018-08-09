@@ -40,7 +40,6 @@ class dumbbell(object):
         self.num_font = pygame.font.SysFont("Msyh",30)
 
         self.cn_font = pygame.font.SysFont("Msyh",58)
-
         self.time_font = pygame.font.SysFont("Msyh",30)
         # Used to manage how fast the screen updates
         self._clock = pygame.time.Clock()
