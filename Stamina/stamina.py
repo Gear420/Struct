@@ -43,8 +43,11 @@ class stamina(object):
         self.count_font = pygame.font.Font("count.ttf",150)
 
 
-
+        #about time
         self._clock = pygame.time.Clock()
+        self.time = 5 * 60
+
+        #about kinect
         self._kinect = PyKinectRuntime.PyKinectRuntime(
             PyKinectV2.FrameSourceTypes_Color | PyKinectV2.FrameSourceTypes_Body)
         self._frame_surface = pygame.Surface(
@@ -124,15 +127,19 @@ class stamina(object):
 
 
 
-    def draw_ui(self):
+    def draw_ui(self,str):
 
         self._frame_surface.set_clip(740, 821, 740, 960)
         self._frame_surface.fill((30,30,30))
         self._frame_surface.set_clip()
-        self._frame_surface.blit(self.font.render("肱二头肌训练", True, (250, 202, 46, 0.3)),
-                                 (int(266/375*540 +740), int(634/667 * 960)))
+        self._frame_surface.blit(self.font.render(str, True, (250, 202, 46, 0.3)),
+                                 (int(266/375*540 +695), int(634/667 * 960)))
     def draw_time(self,time):
-        pass
+        time = time / 60
+        time = (int)(time)
+        time = (str)(time)
+        self._frame_surface.blit(self.dig_font.render(time , True, (250,202,46,0.3)),
+                                 (int(266/375*540 + 730),int(634/667 * 960 - 120)))
 
     def draw_color_frame(self, frame, target_surface):
         target_surface.lock()
@@ -164,7 +171,7 @@ class stamina(object):
         self.counts = self.counts + self.calc_sports_counts(jointl0, jointl1, jointl2, jointr0, jointr1, jointr2)
         counts = (str)(self.counts)
         self._frame_surface.blit(self.count_font.render(counts, True, (0,199,140)),
-                                 (int(18/375*540 + 740),int(607/667 * 960)))
+                                 (int(18/375*540 + 740),int(607/667 * 960 - 80)))
 
     def draw_angel_text(self,joint0,joint1,joint2,jointr0,jointr1,jointr2):
         angell = self.calc_angel(joint0,joint1,joint2)
@@ -191,14 +198,61 @@ class stamina(object):
 
 
     def runc(self):
-        if self._kinect.has_new_color_frame():
-            frame = self._kinect.get_last_color_frame()
-            self.draw_color_frame(frame, self._frame_surface)
-            frame = None
+        if self._bodies is not None:
+            for i in range(0, self._kinect.max_body_count):
+                body = self._bodies.bodies[i]
+                if not body.is_tracked:
+                    continue
+
+                joints = body.joints
+
+                joint_points = self._kinect.body_joints_to_color_space(joints)
+
+                self.draw_angel_text(joint_points[PyKinectV2.JointType_AnkleRight],
+                                         joint_points[PyKinectV2.JointType_KneeRight],
+                                         joint_points[PyKinectV2.JointType_HipRight],
+                                         joint_points[PyKinectV2.JointType_AnkleLeft],
+                                         joint_points[PyKinectV2.JointType_KneeLeft],
+                                         joint_points[PyKinectV2.JointType_HipLeft])
+
+                self.draw_counts_text(joint_points[PyKinectV2.JointType_AnkleRight],
+                                          joint_points[PyKinectV2.JointType_KneeRight],
+                                          joint_points[PyKinectV2.JointType_HipRight],
+                                          joint_points[PyKinectV2.JointType_AnkleLeft],
+                                          joint_points[PyKinectV2.JointType_KneeLeft],
+                                          joint_points[PyKinectV2.JointType_HipLeft])
 
 
+
+    def rund(self):
+        # --- draw skeletons to _frame_surface
+        if self._bodies is not None:
+            for i in range(0, self._kinect.max_body_count):
+                body = self._bodies.bodies[i]
+                if not body.is_tracked:
+                    continue
+
+                joints = body.joints
+                # convert joint coordinates to color space
+                joint_points = self._kinect.body_joints_to_color_space(joints)
+                self.draw_body(joints, joint_points, self.SKELETON_COLORS[i])
+                self.draw_angel_text(joint_points[PyKinectV2.JointType_SpineShoulder],
+                                     joint_points[PyKinectV2.JointType_ShoulderRight],
+                                     joint_points[PyKinectV2.JointType_ElbowRight],
+                                     joint_points[PyKinectV2.JointType_SpineShoulder],
+                                     joint_points[PyKinectV2.JointType_ShoulderLeft],
+                                     joint_points[PyKinectV2.JointType_ElbowLeft])
+
+                self.draw_counts_text(joint_points[PyKinectV2.JointType_SpineShoulder],
+                                      joint_points[PyKinectV2.JointType_ShoulderRight],
+                                      joint_points[PyKinectV2.JointType_ElbowRight],
+                                      joint_points[PyKinectV2.JointType_SpineShoulder],
+                                      joint_points[PyKinectV2.JointType_ShoulderLeft],
+                                      joint_points[PyKinectV2.JointType_ElbowLeft])
     def guide(self):
-        pass
+        self._frame_surface.set_clip()
+        self._frame_surface.fill((255,255,255))
+
     def run(self):
         while not self._done:
             # --- Main event loop
@@ -210,6 +264,8 @@ class stamina(object):
                     self._screen = pygame.display.set_mode(event.dict['size'],
                                                            pygame.HWSURFACE | pygame.DOUBLEBUF | pygame.RESIZABLE, 32)
 
+
+
             if self._kinect.has_new_color_frame():
                 frame = self._kinect.get_last_color_frame()
                 self.draw_color_frame(frame, self._frame_surface)
@@ -219,52 +275,35 @@ class stamina(object):
             if self._kinect.has_new_body_frame():
                 self._bodies = self._kinect.get_last_body_frame()
 
-            self.draw_ui()
-            # --- draw skeletons to _frame_surface
-            if self._bodies is not None:
-                for i in range(0, self._kinect.max_body_count):
-                    body = self._bodies.bodies[i]
-                    if not body.is_tracked:
-                        continue
+            print(self.time)
+            if self.time <= 0 and self.time >= -500 :
+                self.guide()
+                #self.time = self.time + 1
+            elif self.time > 0:
+                self.draw_ui("上肢力量评估")
+                self.draw_time(self.time)
+                self.rund()
+            else:
+                #self._frame_surface.fill((0,0,0))
 
-                    joints = body.joints
-                    # convert joint coordinates to color space
-                    joint_points = self._kinect.body_joints_to_color_space(joints)
-                    self.draw_body(joints, joint_points, self.SKELETON_COLORS[i])
-                    self.draw_angel_text(joint_points[PyKinectV2.JointType_SpineShoulder],
-                                         joint_points[PyKinectV2.JointType_ShoulderRight],
-                                         joint_points[PyKinectV2.JointType_ElbowRight],
-                                         joint_points[PyKinectV2.JointType_SpineShoulder],
-                                         joint_points[PyKinectV2.JointType_ShoulderLeft],
-                                         joint_points[PyKinectV2.JointType_ElbowLeft])
-
-                    self.draw_counts_text(joint_points[PyKinectV2.JointType_SpineShoulder],
-                                          joint_points[PyKinectV2.JointType_ShoulderRight],
-                                          joint_points[PyKinectV2.JointType_ElbowRight],
-                                          joint_points[PyKinectV2.JointType_SpineShoulder],
-                                          joint_points[PyKinectV2.JointType_ShoulderLeft],
-                                          joint_points[PyKinectV2.JointType_ElbowLeft])
+                self.draw_ui("下肢力量评估")
+                self.draw_time(self.time)
+                self.runc()
 
 
 
-            rect = (740, 0, int(1080/2), int(1920 /2))
+
+            rect = (740, 0, int(1080/2), int(1920/2))
 
 
             surface_to_draw = pygame.Surface.subsurface(self._frame_surface, rect)
-            surface_to_draw = pygame.transform.scale(surface_to_draw, (1080, 1920))
+            surface_to_draw = pygame.transform.scale(surface_to_draw, (int(1080/self.n),int(1920/self.n)))
             self.screen.blit(surface_to_draw, (0, 0))
             surface_to_draw = None
-
-
-
-            self.guide()
-            self.runc()
-
-
 
 
             pygame.display.update()
 
             self._clock.tick(60)
 
-
+            self.time = self.time - 1

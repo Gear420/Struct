@@ -213,7 +213,7 @@ class dumbbell(object):
                         continue
                     joints = body.joints
                     joint_points = self._kinect.body_joints_to_color_space(joints)
-                    #self.draw_body(joints, joint_points, SKELETON_COLORS[i])
+                    self.draw_body(joints, joint_points, SKELETON_COLORS[i])
                     self.draw_angel_text(joint_points[PyKinectV2.JointType_SpineShoulder],joint_points[PyKinectV2.JointType_ShoulderRight],joint_points[PyKinectV2.JointType_ElbowRight],joint_points[PyKinectV2.JointType_SpineShoulder],joint_points[PyKinectV2.JointType_ShoulderLeft],joint_points[PyKinectV2.JointType_ElbowLeft])
                     self.draw_counts_text(joint_points[PyKinectV2.JointType_SpineShoulder],joint_points[PyKinectV2.JointType_ShoulderRight],joint_points[PyKinectV2.JointType_ElbowRight],joint_points[PyKinectV2.JointType_SpineShoulder],joint_points[PyKinectV2.JointType_ShoulderLeft],joint_points[PyKinectV2.JointType_ElbowLeft])
 
