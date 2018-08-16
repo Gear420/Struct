@@ -1,7 +1,6 @@
 import cv2
 
 
-
 def saveloginFile():
     cap = cv2.VideoCapture(0)
     while (1):

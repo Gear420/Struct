@@ -1,6 +1,5 @@
 #coding=utf-8
 from tkinter import *
-import cv2
 from util.saveFilebyOpencv import *
 from util import saveFilebyOpencv
 from util import base64tool
