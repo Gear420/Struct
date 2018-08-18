@@ -4,9 +4,7 @@ from utils import utils
 class signup(object):
     def __init__(self,face_token):
         self.face_token = face_token
-
-
-     def getFaceSet(self):
+    def getFaceSet(self):
         api_url = "https://api-cn.faceplusplus.com/facepp/v3/faceset/getfacesets?" \
               "api_key=dBDgK-yTfHusyI2rHtHPz8vQn3woE0KZ&" \
               "api_secret=fnxB38IaaPSzA45eEkZvc-6drk38AQzD"
