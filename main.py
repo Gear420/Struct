@@ -5,5 +5,5 @@ from UI.ui import ui
 
 if __name__ == "__main__":
     print("Start Working")
-    g = ui(3)
+    g = ui(1)
     g.run()

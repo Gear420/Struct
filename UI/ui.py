@@ -6,13 +6,18 @@ import ctypes
 #from Stamina.stamina import stamina
 from faceRecognition.Login import login
 from faceRecognition.Signup import signup
+from image import Image
+from button import Button
+from faceRecognition.ui import faceregui
+
+
 
 class ui(object):
     def __init__(self,n):
         self.SCREEN_WIDTH=(int)(1080 / n)
         self.SCREEN_HEIGHT=(int)(1920 / n)
         self.n = n
-
+        self.start_flag = 0
 
 
         pygame.init()
@@ -21,14 +26,23 @@ class ui(object):
         self.display_surface = pygame.Surface((self.SCREEN_WIDTH,self.SCREEN_HEIGHT))
         pygame.display.set_caption('v0.1')
 
+        self.start = Image("images/poster.png", (0, 0), self.screen)
+        self.stat = self.start.image
+        self.position = self.start.image.get_rect()
 
     def face_reg(self):
         pass
 
-    def load_face_images(self):
-        self.login = pygame.Surface(100,100)
-        self.signup = 1
 
+    def load_face_images(self):
+        self.login =
+        self.signup =
+
+
+    #
+    # def start(self,position):
+    #     # start = Image("images/poster.png",(0,0),self.screen)
+    #     self.start.render(position)
 
 
     def load_set_images(self):
@@ -69,7 +83,7 @@ class ui(object):
 
 
 
-        self.menu = pygame.image.load('images/menu.png').convert_alpha()
+        self.menu = pygame.image.load("images/menu.png").convert_alpha()
         mwidth = (int)(self.menu.get_width()*1.43/self.n)
         mheight = (int)(self.menu.get_height()*1.43/self.n)
         self.menu = pygame.transform.scale(self.menu,(mwidth,mheight))
@@ -83,30 +97,50 @@ class ui(object):
 
 
     def run(self):
-        self.load_set_images()
-        self.screen.blit(self.display_surface,[0,0])
+        # self.load_set_images()
+        # self.screen.blit(self.display_surface,[0,0])
+        self.start.render((0,0))
+        h = 0
         while True:
             for event in pygame.event.get():
+                print(event)
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     exit()
 
+            press = pygame.mouse.get_pressed()
+            if press ==  (1,0,0):
+                self.start_flag = 1
+            if self.start_flag == 1:
+                self.position = self.position.move(0, -30)
+
+            self.screen.blit(self.stat, self.position)
 
 
 
-            if self.change_mode(pygame.mouse.get_pos()) == 2:
-                print("233")
-                #c = stamina(self.screen,self.n)
-                #c.run()
-            else:
-                pass
+
+
+
+
+            #
+            # for event in pygame.event.get():
+            #     if event.type == pygame.eventMOUSEBUTTONDOWN;
+
+            # if self.change_mode(pygame.mouse.get_pos()) == 2:
+            #     print("233")
+            #     #c = stamina(self.screen,self.n)
+            #     #c.run()
+            # else:
+            #     pass
 
             pygame.display.update()
 
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    pygame.quit()
-                    exit()
+            # for event in pygame.event.get():
+            #     if event.type == pygame.QUIT:
+            #         pygame.quit()
+            #         exit()
+            pygame.time.delay(1)
+
 
 
 

@@ -12,7 +12,7 @@ class Button(object):
         self.imageUp = pygame.image.load(upimage).convert_alpha()
         self.imageDown = pygame.image.load(downimage).convert_alpha()
         self.position = position
-        self.screen =screen
+        self.screen = screen
 
     def isOver(self):
         point_x, point_y = pygame.mouse.get_pos()
