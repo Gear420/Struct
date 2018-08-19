@@ -1,9 +1,12 @@
 import requests
 from utils import utils
+from utils.utils import saveloginFile
+from utils.utils import savesignupFile
 
 class signup(object):
     def __init__(self,face_token):
         self.face_token = face_token
+
     def getFaceSet(self):
         api_url = "https://api-cn.faceplusplus.com/facepp/v3/faceset/getfacesets?" \
               "api_key=dBDgK-yTfHusyI2rHtHPz8vQn3woE0KZ&" \

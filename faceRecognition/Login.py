@@ -2,10 +2,12 @@
 
 import requests
 from faceRecognition.Signup import signup
+from utils.utils import detect,logintobase64
 
 class login(object):
     def __init__(self, face_token, faceset_token):
-
+        face_token = detect(logintobase64())
+        faceset_token = signup().getFaceSet()
         self.face_token = face_token
         self.faceset_token = faceset_token
         self.api_url = "https://api-cn.faceplusplus.com/facepp/v3/search?" \
@@ -17,6 +19,10 @@ class login(object):
         rep = requests.post(self.api_url)
         result = rep.json()
         print "置信度:"
-        print result["results"][0]["confidence"]
+        con = result["results"][0]["confidence"]
+        if con > 80:
+            return True
+        else:
+            return False
 
 

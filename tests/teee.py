@@ -12,7 +12,7 @@ a.signup()
 
 utils.saveloginFile()
 base64 = utils.logintobase64()
-face_token = utils.detect(base64)
+face_token = utils.detect(utils.logintobase64())
 print(face_token)
 b = login(face_token,a.getFaceSet())
 b.login()

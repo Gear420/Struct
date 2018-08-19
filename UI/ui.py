@@ -8,21 +8,24 @@ from faceRecognition.Login import login
 from faceRecognition.Signup import signup
 from image import Image
 from button import Button
-from faceRecognition.ui import faceregui
+from utils.utils import scale
+from utils.utils import choose
+
+
 
 
 
 class ui(object):
     def __init__(self,n):
-        self.SCREEN_WIDTH=(int)(1080 / n)
-        self.SCREEN_HEIGHT=(int)(1920 / n)
+        self.SCREEN_WIDTH= 2160 /n
+        self.SCREEN_HEIGHT= 3840 / n
         self.n = n
         self.start_flag = 0
 
 
         pygame.init()
         self._clock = pygame.time.Clock()
-        self.screen = pygame.display.set_mode((self.SCREEN_WIDTH, self.SCREEN_HEIGHT),pygame.HWSURFACE | pygame.DOUBLEBUF | pygame.RESIZABLE)
+        self.screen = pygame.display.set_mode((self.SCREEN_WIDTH, self.SCREEN_HEIGHT),pygame.HWSURFACE | pygame.DOUBLEBUF ,32)
         self.display_surface = pygame.Surface((self.SCREEN_WIDTH,self.SCREEN_HEIGHT))
         pygame.display.set_caption('v0.1')
 
@@ -30,13 +33,10 @@ class ui(object):
         self.stat = self.start.image
         self.position = self.start.image.get_rect()
 
-    def face_reg(self):
-        pass
-
-
-    def load_face_images(self):
-        self.login =
-        self.signup =
+    #
+    # def load_face_images(self):
+    #     self.login =
+    #     self.signup =
 
 
     #
@@ -50,11 +50,42 @@ class ui(object):
         #self.background.fill((255,255,255))
 
 
-        # self.zhidao_image = pygame.image.load('images/1.jpg')
-        # zwidth = (int)(self.zhidao_image.get_width()*1.43/self.n)
-        # zheight = (int)(self.zhidao_image.get_height()*1.43/self.n)
-        # self.zhidao_image = pygame.transform.scale(self.zhidao_image,(zwidth,zheight))
-        # self.screen.blit(self.zhidao_image,[16/375*self.SCREEN_WIDTH,189/667*self.SCREEN_HEIGHT])
+        self.zhidao_image = pygame.image.load('images/1.jpeg')
+        self.zhidao_image = pygame.transform.smoothscale(self.zhidao_image,(int(168 * 5.76 / self.n),int(259 * 5.76 / self.n)))
+        self.zh = (16*self.SCREEN_WIDTH)/375
+        self.zz = (189*self.SCREEN_HEIGHT)/667
+        self.zhidao_image = scale(self.zhidao_image,(self.zh,self.zz))
+
+        self.display_surface.blit(self.zhidao_image,(self.zh,self.zz))
+
+
+
+
+
+
+        self.meiyan_image = pygame.image.load('images/2.jpeg')
+        self.meiyan_image = pygame.transform.smoothscale(self.meiyan_image, (int(168 * 5.76 / self.n), int(120 * 5.76 /self.n)))
+        self.mh = (16 * self.SCREEN_WIDTH) / 375
+        self.mz = (456 * self.SCREEN_HEIGHT) / 667
+        self.display_surface.blit(self.meiyan_image, (self.mh, self.mz))
+
+
+
+
+        self.pinggu_image = pygame.image.load('images/3.jpeg')
+        self.pinggu_image = pygame.transform.smoothscale(self.pinggu_image, (int(168 * 5.76 /self.n), int(164 * 5.76 / self.n)))
+        self.ph = (192 * self.SCREEN_WIDTH) / 375
+        self.pz = (189 * self.SCREEN_HEIGHT) / 667
+        self.display_surface.blit(self.pinggu_image, (self.ph, self.pz))
+
+        self.baogao_image = pygame.image.load('images/4.jpeg')
+        self.baogao_image = pygame.transform.smoothscale(self.baogao_image, (int(168 * 5.76 /self.n), int(215 * 5.76 / self.n)))
+        h = (192 * self.SCREEN_WIDTH) / 375
+        z = (361 * self.SCREEN_HEIGHT) / 667
+        self.display_surface.blit(self.baogao_image, (h, z))
+
+
+
         #
         #
         # self.meiyan_image = pygame.image.load('images/2.jpg')
@@ -75,7 +106,12 @@ class ui(object):
         # self.baogao_image = pygame.transform.scale(self.baogao_image,(width,height))
         # self.screen.blit(self.baogao_image,[192/375 * self.SCREEN_WIDTH,361/667 *self.SCREEN_HEIGHT])
         #
-        # self.logo_image = pygame.image.load('images/logo.png')
+        self.logo_image = pygame.image.load('images/logo2.png')
+        self.logo_image = pygame.transform.smoothscale(self.logo_image,
+                                                         (int(82 * 5.76 / self.n), int(74 * 5.76 / self.n)))
+        h = (150 * self.SCREEN_WIDTH) / 375
+        z = (44 * self.SCREEN_HEIGHT) / 667
+        self.screen.blit(self.logo_image, (h, z))
         # width = (int)(41 * 2 * 2 / self.n)
         # height = (int)(37 * 2 * 2 / self.n)
         # self.logo_image = pygame.transform.scale(self.logo_image,(width,height))
@@ -83,38 +119,37 @@ class ui(object):
 
 
 
-        self.menu = pygame.image.load("images/menu.png").convert_alpha()
-        mwidth = (int)(self.menu.get_width()*1.43/self.n)
-        mheight = (int)(self.menu.get_height()*1.43/self.n)
-        self.menu = pygame.transform.scale(self.menu,(mwidth,mheight))
-        self.display_surface.blit(self.menu,[0,0])
+        # self.menu = pygame.image.load("images/menu.png").convert_alpha()
+        # mwidth = (int)(self.menu.get_width()*1.43/self.n)
+        # mheight = (int)(self.menu.get_height()*1.43/self.n)
+        # self.menu = pygame.transform.scale(self.menu,(mwidth,mheight))
+        # self.display_surface.blit(self.menu,[0,0])
     def change_mode(self,pos):
-        for event in pygame.event.get():
-            print(event)
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                eventarray = pygame.mouse.get_pos()
-                return 2
+        if choose(self.pinggu_image,)
+
 
 
     def run(self):
-        # self.load_set_images()
-        # self.screen.blit(self.display_surface,[0,0])
-        self.start.render((0,0))
-        h = 0
+
+        #self.screen.blit(self.display_surface,[0,0])
+        # self.start.render((0,0))
+        # h = 0
         while True:
+
             for event in pygame.event.get():
-                print(event)
+                #print(event)
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     exit()
-
-            press = pygame.mouse.get_pressed()
-            if press ==  (1,0,0):
-                self.start_flag = 1
-            if self.start_flag == 1:
-                self.position = self.position.move(0, -30)
-
-            self.screen.blit(self.stat, self.position)
+            self.load_set_images()
+            self.screen.blit(self.display_surface,(0,0))
+            # press = pygame.mouse.get_pressed()
+            # if press ==  (1,0,0):
+            #     self.start_flag = 1
+            # if self.start_flag == 1:
+            #     self.position = self.position.move(0, -30)
+            #
+            # self.screen.blit(self.stat, self.position)
 
 
 

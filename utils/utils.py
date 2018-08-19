@@ -3,6 +3,7 @@
 import base64
 import requests
 import cv2
+import pygame
 
 
 def signuptobase64():
@@ -49,3 +50,39 @@ def savesignupFile():
             break
     cap.release()
     cv2.destroyAllWindows()
+
+def scale(image,position):
+    point_x, point_y = pygame.mouse.get_pos()
+    #print(point_x)
+    #print(point_y)
+    x, y = position
+    w, h = image.get_size()
+    #print(w)
+    #print(h)
+
+    in_x = x - w / 2 < point_x < x + w / 2
+    in_y = y - h / 2 < point_y < y + h / 2
+    if in_x and in_y:
+        print("hello")
+        image = pygame.transform.rotozoom(image, 0.0, 1.5 )
+        return image
+    else:
+        return image
+def choose(image,position):
+    point_x, point_y = pygame.mouse.get_pos()
+    #print(point_x)
+    #print(point_y)
+    x, y = position
+    w, h = image.get_size()
+    #print(w)
+    #print(h)
+
+    in_x = x - w / 2 < point_x < x + w / 2
+    in_y = y - h / 2 < point_y < y + h / 2
+    if in_x and in_y:
+        array = pygame.mouse.get_pressed()
+        if array[0] == 1:
+            return True
+        else:
+            return False
+    return False

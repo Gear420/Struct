@@ -6,6 +6,8 @@ import ctypes
 import _ctypes
 import pygame
 import sys
+import time
+from faceRecognition.Login import login
 
 if sys.hexversion >= 0x03000000:
     import _thread as thread
@@ -34,6 +36,12 @@ class stamina(object):
         self.status=0
         self.counts = 0
 
+
+
+
+        self.guide_flag = 0
+        self.up_flag = 0
+        self.login_flag = 0
 
         #about fonts
         self.font = pygame.font.SysFont("SimHei",28)
@@ -133,13 +141,24 @@ class stamina(object):
         self._frame_surface.fill((30,30,30))
         self._frame_surface.set_clip()
         self._frame_surface.blit(self.font.render(str, True, (250, 202, 46, 0.3)),
-                                 (int(266/375*540 +695), int(634/667 * 960)))
+                                 (int(266/375*540 + 695), int(634/667 * 960)))
     def draw_time(self,time):
         time = time / 60
         time = (int)(time)
         time = (str)(time)
         self._frame_surface.blit(self.dig_font.render(time , True, (250,202,46,0.3)),
                                  (int(266/375*540 + 730),int(634/667 * 960 - 120)))
+
+    def render_face(self):
+        self._frame_surface.set_clip()
+        self._frame_surface.fill()
+        self._frame_surface.set_clip()
+        self._frame_surface.fill()
+        self._frame_surface.set_clip()
+        self._frame_surface.fill()
+        self._frame_surface.set_clip()
+        self._frame_surface.fill()
+        self._frame_surface.set_clip()
 
     def draw_color_frame(self, frame, target_surface):
         target_surface.lock()
@@ -193,6 +212,14 @@ class stamina(object):
         else:
             angelr = (str)(angelr)
             self._frame_surface.blit(self.dig_font.render(angelr,True,(255,255,255)),(jointr1.x,jointr1.y))
+
+
+    def renderface(self):
+        self._frame_surface.blit()
+    def facereg(self):
+        time.sleep(10)
+        return True
+
 
 
 
@@ -271,24 +298,36 @@ class stamina(object):
                 self.draw_color_frame(frame, self._frame_surface)
                 frame = None
 
+
+            self.render_face()
+
+
             # --- Cool! We have a body frame, so can get skeletons
             if self._kinect.has_new_body_frame():
                 self._bodies = self._kinect.get_last_body_frame()
+                if self.login_flag == 0:
+                    if self.facereg():
+                        self.login_flag = 1
 
-            print(self.time)
-            if self.time <= 0 and self.time >= -500 :
-                self.guide()
-                #self.time = self.time + 1
-            elif self.time > 0:
-                self.draw_ui("上肢力量评估")
-                self.draw_time(self.time)
-                self.rund()
-            else:
-                #self._frame_surface.fill((0,0,0))
 
-                self.draw_ui("下肢力量评估")
-                self.draw_time(self.time)
-                self.runc()
+
+            if self.login_flag == 1:
+
+                print(self.time)
+                if self.up_flag == 0:
+                    self.draw_ui("上肢力量评估")
+                    self.draw_time(self.time)
+                    self.rund()
+                    self.time = 5 * 60
+                    self.up_flag = 1
+                elif self.guide_flag ==  0:
+                    self.guide()
+                    self.guide_flag = 1
+                    self.time = 30 * 60
+                else:
+                    self.draw_ui("下肢力量评估")
+                    self.draw_time(self.time)
+                    self.runc()
 
 
 
@@ -297,7 +336,7 @@ class stamina(object):
 
 
             surface_to_draw = pygame.Surface.subsurface(self._frame_surface, rect)
-            surface_to_draw = pygame.transform.scale(surface_to_draw, (int(1080/self.n),int(1920/self.n)))
+            surface_to_draw = pygame.transform.scale(surface_to_draw, (int(2160/self.n),int(3840/self.n)))
             self.screen.blit(surface_to_draw, (0, 0))
             surface_to_draw = None
 

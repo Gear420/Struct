@@ -35,11 +35,3 @@ class Button(object):
 
 
 
-# while True:
-#     for event in pygame.event.get():
-#         if event.type == pygame.QUIT:
-#             pygame.quit()
-#             exit()
-#     screen.fill((200, 200, 200))
-#     button.render()
-#     pygame.display.update()
