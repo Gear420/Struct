@@ -1,3 +1,5 @@
+#coding=utf-8
+
 from KinectTools import PyKinectV2
 from KinectTools.PyKinectV2 import *
 from KinectTools import PyKinectRuntime
@@ -150,15 +152,22 @@ class stamina(object):
                                  (int(266/375*540 + 730),int(634/667 * 960 - 120)))
 
     def render_face(self):
+        self._frame_surface.set_clip(740,0,1280,200)
+        self._frame_surface.fill((0,0,0))
+        self._frame_surface.set_clip(740,200,940,760)
+        self._frame_surface.fill((0,0,0))
+        self._frame_surface.set_clip(1080,200,1280,760)
+        self._frame_surface.fill((0,0,0))
+        self._frame_surface.set_clip(740,760,1280,960)
+        self._frame_surface.fill((0,0,0))
         self._frame_surface.set_clip()
-        self._frame_surface.fill()
-        self._frame_surface.set_clip()
-        self._frame_surface.fill()
-        self._frame_surface.set_clip()
-        self._frame_surface.fill()
-        self._frame_surface.set_clip()
-        self._frame_surface.fill()
-        self._frame_surface.set_clip()
+        self.back = pygame.image.load("images/back.png")
+        self.go =pygame.image.load("images/go.png")
+        self.home = pygame.image.load("images/home.png")
+        self.loop = pygame.image.load("images/loop.png")
+        self._frame_surface.blit()
+
+
 
     def draw_color_frame(self, frame, target_surface):
         target_surface.lock()
@@ -214,16 +223,12 @@ class stamina(object):
             self._frame_surface.blit(self.dig_font.render(angelr,True,(255,255,255)),(jointr1.x,jointr1.y))
 
 
-    def renderface(self):
-        self._frame_surface.blit()
+
+
     def facereg(self):
+
         time.sleep(10)
         return True
-
-
-
-
-
     def runc(self):
         if self._bodies is not None:
             for i in range(0, self._kinect.max_body_count):

@@ -6,7 +6,7 @@ import ctypes
 #from Stamina.stamina import stamina
 from faceRecognition.Login import login
 from faceRecognition.Signup import signup
-from image import Image
+from image import image
 from button import Button
 from utils.utils import scale
 from utils.utils import choose
@@ -29,9 +29,9 @@ class ui(object):
         self.display_surface = pygame.Surface((self.SCREEN_WIDTH,self.SCREEN_HEIGHT))
         pygame.display.set_caption('v0.1')
 
-        self.start = Image("images/poster.png", (0, 0), self.screen)
-        self.stat = self.start.image
-        self.position = self.start.image.get_rect()
+        #self.start = Image("images/poster.png", (0, 0), self.screen)
+        #self.stat = self.start.image
+        #self.position = self.start.image.get_rect()
 
     #
     # def load_face_images(self):
@@ -80,12 +80,17 @@ class ui(object):
 
         self.baogao_image = pygame.image.load('images/4.jpeg')
         self.baogao_image = pygame.transform.smoothscale(self.baogao_image, (int(168 * 5.76 /self.n), int(215 * 5.76 / self.n)))
-        h = (192 * self.SCREEN_WIDTH) / 375
-        z = (361 * self.SCREEN_HEIGHT) / 667
-        self.display_surface.blit(self.baogao_image, (h, z))
+        self.bh = (192 * self.SCREEN_WIDTH) / 375
+        self.bz = (361 * self.SCREEN_HEIGHT) / 667
+        self.display_surface.blit(self.baogao_image, (self.bh, self.bz))
 
-
-
+        rect = self.baogao_image.get_rect()
+        
+        print(rect)
+        print(self.bh)
+        print(self.bz)
+        print(168 * 5.76 / self.n)
+        print(215*5.76 / self.n)
         #
         #
         # self.meiyan_image = pygame.image.load('images/2.jpg')
@@ -112,6 +117,8 @@ class ui(object):
         h = (150 * self.SCREEN_WIDTH) / 375
         z = (44 * self.SCREEN_HEIGHT) / 667
         self.screen.blit(self.logo_image, (h, z))
+
+
         # width = (int)(41 * 2 * 2 / self.n)
         # height = (int)(37 * 2 * 2 / self.n)
         # self.logo_image = pygame.transform.scale(self.logo_image,(width,height))
@@ -124,11 +131,9 @@ class ui(object):
         # mheight = (int)(self.menu.get_height()*1.43/self.n)
         # self.menu = pygame.transform.scale(self.menu,(mwidth,mheight))
         # self.display_surface.blit(self.menu,[0,0])
-    def change_mode(self,pos):
-        if choose(self.pinggu_image,)
-
-
-
+    def change_mode(self):
+        if choose(self.pinggu_image,(self.ph,self.pz)):
+            return 2
     def run(self):
 
         #self.screen.blit(self.display_surface,[0,0])
@@ -141,8 +146,9 @@ class ui(object):
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     exit()
-            self.load_set_images()
-            self.screen.blit(self.display_surface,(0,0))
+            if self.start_flag == 0:
+                self.load_set_images()
+                self.screen.blit(self.display_surface,(0,0))
             # press = pygame.mouse.get_pressed()
             # if press ==  (1,0,0):
             #     self.start_flag = 1
@@ -161,10 +167,11 @@ class ui(object):
             # for event in pygame.event.get():
             #     if event.type == pygame.eventMOUSEBUTTONDOWN;
 
-            # if self.change_mode(pygame.mouse.get_pos()) == 2:
-            #     print("233")
-            #     #c = stamina(self.screen,self.n)
-            #     #c.run()
+            if self.change_mode() == 2:
+                print("kinect work!")
+                self.start_flag = 1
+                #c = stamina(self.screen,self.n)
+                #c.run()
             # else:
             #     pass
 
