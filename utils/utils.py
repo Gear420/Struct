@@ -68,7 +68,7 @@ def scale(image,position):
         return image
     else:
         return image
-def choose(image,position):
+def click(image,position):
     point_x, point_y = pygame.mouse.get_pos()
     #print(point_x)
     #print(point_y)
@@ -86,3 +86,20 @@ def choose(image,position):
         else:
             return False
     return False
+
+def choose(image,position):
+    point_x, point_y = pygame.mouse.get_pos()
+    #print(point_x)
+    #print(point_y)
+    x, y = position
+    w, h = image.get_size()
+    #print(w)
+    #print(h)
+
+    in_x = x - w / 2 < point_x < x + w / 2
+    in_y = y - h / 2 < point_y < y + h / 2
+    if in_x and in_y:
+        return
+    else:
+        return
+

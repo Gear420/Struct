@@ -21,6 +21,7 @@ else:
 
 class stamina(object):
     def __init__(self,screen,n):
+        self.data = {}
         self.SKELETON_COLORS = [pygame.color.THECOLORS["red"],
                            pygame.color.THECOLORS["blue"],
                            pygame.color.THECOLORS["green"],
@@ -40,10 +41,10 @@ class stamina(object):
 
 
 
-
         self.guide_flag = 0
         self.up_flag = 0
         self.login_flag = 0
+        self.down_flag = 0
 
         #about fonts
         self.font = pygame.font.SysFont("SimHei",28)
@@ -161,11 +162,16 @@ class stamina(object):
         self._frame_surface.set_clip(740,760,1280,960)
         self._frame_surface.fill((0,0,0))
         self._frame_surface.set_clip()
+
         self.back = pygame.image.load("images/back.png")
         self.go =pygame.image.load("images/go.png")
         self.home = pygame.image.load("images/home.png")
         self.loop = pygame.image.load("images/loop.png")
-        self._frame_surface.blit()
+
+        self._frame_surface.blit(self.back,(740,0))
+        self._frame_surface.blit(self.home,(1240,0))
+        self._frame_surface.blit(self.loop,(940,500))
+        self._frame_surface.blit(self.go,(1080,500))
 
 
 
@@ -176,6 +182,9 @@ class stamina(object):
         del address
         target_surface.unlock()
 
+
+    def render_result():
+        pass
 
     def calc_angel(self,joint0,joint1,joint2):
         v1_x = joint1.x - joint0.x
@@ -303,14 +312,13 @@ class stamina(object):
                 self.draw_color_frame(frame, self._frame_surface)
                 frame = None
 
+            if self.login_flag == 0:
+                self.render_face()
 
-            self.render_face()
-
-
-            # --- Cool! We have a body frame, so can get skeletons
             if self._kinect.has_new_body_frame():
                 self._bodies = self._kinect.get_last_body_frame()
                 if self.login_flag == 0:
+                    pygame.image.save(self._frame_surface,"login.png")
                     if self.facereg():
                         self.login_flag = 1
 
@@ -325,18 +333,21 @@ class stamina(object):
                     self.rund()
                     self.time = 5 * 60
                     self.up_flag = 1
+                    self.data["up"] = self.counts
+
                 elif self.guide_flag ==  0:
                     self.guide()
                     self.guide_flag = 1
                     self.time = 30 * 60
-                else:
+                elif self.down_flag == 0:
                     self.draw_ui("下肢力量评估")
                     self.draw_time(self.time)
                     self.runc()
+                    self.down_flag = 1
+                    self.data["down"] = self.counts
 
-
-
-
+            if self.down_flag == 1:
+                self.render_result()
             rect = (740, 0, int(1080/2), int(1920/2))
 
 

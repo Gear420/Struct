@@ -6,7 +6,7 @@ import ctypes
 #from Stamina.stamina import stamina
 from faceRecognition.Login import login
 from faceRecognition.Signup import signup
-from image import image
+from image import Image
 from button import Button
 from utils.utils import scale
 from utils.utils import choose
@@ -54,7 +54,7 @@ class ui(object):
         self.zhidao_image = pygame.transform.smoothscale(self.zhidao_image,(int(168 * 5.76 / self.n),int(259 * 5.76 / self.n)))
         self.zh = (16*self.SCREEN_WIDTH)/375
         self.zz = (189*self.SCREEN_HEIGHT)/667
-        self.zhidao_image = scale(self.zhidao_image,(self.zh,self.zz))
+        #self.zhidao_image = scale(self.zhidao_image,(self.zh,self.zz))
 
         self.display_surface.blit(self.zhidao_image,(self.zh,self.zz))
 
@@ -83,14 +83,12 @@ class ui(object):
         self.bh = (192 * self.SCREEN_WIDTH) / 375
         self.bz = (361 * self.SCREEN_HEIGHT) / 667
         self.display_surface.blit(self.baogao_image, (self.bh, self.bz))
+        # self.bh = (192 * self.SCREEN_WIDTH / 375)
+        # self.bz = (361 * self.SCREEN_HEIGHT / 667)
+        # self.baogao_image = Image("images/4.jpeg",None,(self.bh,self.bz))
+        # #self.baogao_image.update()
+        # self.display_surface.blit(self.baogao_image.image,(self.bh,self.bz))
 
-        rect = self.baogao_image.get_rect()
-        
-        print(rect)
-        print(self.bh)
-        print(self.bz)
-        print(168 * 5.76 / self.n)
-        print(215*5.76 / self.n)
         #
         #
         # self.meiyan_image = pygame.image.load('images/2.jpg')
@@ -114,9 +112,9 @@ class ui(object):
         self.logo_image = pygame.image.load('images/logo2.png')
         self.logo_image = pygame.transform.smoothscale(self.logo_image,
                                                          (int(82 * 5.76 / self.n), int(74 * 5.76 / self.n)))
-        h = (150 * self.SCREEN_WIDTH) / 375
-        z = (44 * self.SCREEN_HEIGHT) / 667
-        self.screen.blit(self.logo_image, (h, z))
+        self.lh = (150 * self.SCREEN_WIDTH) / 375
+        self.lz = (44 * self.SCREEN_HEIGHT) / 667
+        self.screen.blit(self.logo_image, (self.lh, self.lz))
 
 
         # width = (int)(41 * 2 * 2 / self.n)
