@@ -70,17 +70,18 @@ def scale(image,position):
         return image
 def click(image,position):
     point_x, point_y = pygame.mouse.get_pos()
-    #print(point_x)
-    #print(point_y)
+    print(point_x)
+    print(point_y)
     x, y = position
     w, h = image.get_size()
-    #print(w)
-    #print(h)
+    print(w)
+    print(h)
 
     in_x = x - w / 2 < point_x < x + w / 2
     in_y = y - h / 2 < point_y < y + h / 2
     if in_x and in_y:
         array = pygame.mouse.get_pressed()
+        print(array)
         if array[0] == 1:
             return True
         else:

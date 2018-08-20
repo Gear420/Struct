@@ -9,7 +9,7 @@ from faceRecognition.Signup import signup
 from image import Image
 from button import Button
 from utils.utils import scale
-from utils.utils import choose
+from utils.utils import choose,click
 
 
 
@@ -116,7 +116,6 @@ class ui(object):
         self.lz = (44 * self.SCREEN_HEIGHT) / 667
         self.screen.blit(self.logo_image, (self.lh, self.lz))
 
-
         # width = (int)(41 * 2 * 2 / self.n)
         # height = (int)(37 * 2 * 2 / self.n)
         # self.logo_image = pygame.transform.scale(self.logo_image,(width,height))
@@ -130,8 +129,10 @@ class ui(object):
         # self.menu = pygame.transform.scale(self.menu,(mwidth,mheight))
         # self.display_surface.blit(self.menu,[0,0])
     def change_mode(self):
-        if choose(self.pinggu_image,(self.ph,self.pz)):
+        if click(self.pinggu_image,(self.ph,self.pz)):
+            print("into2")
             return 2
+
     def run(self):
 
         #self.screen.blit(self.display_surface,[0,0])
@@ -145,8 +146,13 @@ class ui(object):
                     pygame.quit()
                     exit()
             if self.start_flag == 0:
+                print("set_images...")
                 self.load_set_images()
                 self.screen.blit(self.display_surface,(0,0))
+                if self.change_mode() == 2:
+                    print("kinect work!")
+                    self.start_flag = 1
+
             # press = pygame.mouse.get_pressed()
             # if press ==  (1,0,0):
             #     self.start_flag = 1
@@ -158,16 +164,15 @@ class ui(object):
 
 
 
-
-
+            if self.start_flag == 1:
+                pass
+                # c = stamina(self.screen,self.n)
+                # c.run()
 
             #
             # for event in pygame.event.get():
             #     if event.type == pygame.eventMOUSEBUTTONDOWN;
 
-            if self.change_mode() == 2:
-                print("kinect work!")
-                self.start_flag = 1
                 #c = stamina(self.screen,self.n)
                 #c.run()
             # else:
@@ -179,7 +184,7 @@ class ui(object):
             #     if event.type == pygame.QUIT:
             #         pygame.quit()
             #         exit()
-            pygame.time.delay(1)
+            self._clock.tick(60)
 
 
 

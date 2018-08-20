@@ -247,7 +247,6 @@ class stamina(object):
 
 
     def facereg(self):
-
         time.sleep(10)
         return True
     def runc(self):
