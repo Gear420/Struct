@@ -9,6 +9,7 @@ import _ctypes
 import pygame
 import sys
 import time
+from ResultPrints.result_ui import result
 from faceRecognition.Login import login
 
 if sys.hexversion >= 0x03000000:
@@ -39,8 +40,6 @@ class stamina(object):
         self.status=0
         self.counts = 0
 
-
-
         self.guide_flag = 0
         self.up_flag = 0
         self.login_flag = 0
@@ -64,9 +63,21 @@ class stamina(object):
         self._frame_surface = pygame.Surface(
             (self._kinect.color_frame_desc.Width, self._kinect.color_frame_desc.Height), 0, 32)
 
-
         self._bodies = None
 
+        #about data
+        self.data["name"] = "张兴宇"
+        import datetime
+        nowTime = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        self.data["year"] = 24
+        self.data["time"] = nowTime
+        self.data["height"] = 0
+        self.data["weight"] = 0
+        self.data["bust"] = 0
+        self.data["waist"] = 0
+        self.data["hip"] = 0
+        self.data["up"] = 0
+        self.data["down"] = 0
     def draw_body_bone(self, joints, jointPoints, color, joint0, joint1):
         joint0State = joints[joint0].TrackingState;
         joint1State = joints[joint1].TrackingState;
@@ -183,8 +194,9 @@ class stamina(object):
         target_surface.unlock()
 
 
-    def render_result():
-        pass
+    def render_result(data):
+        a = result(data)
+        a.render()
 
     def calc_angel(self,joint0,joint1,joint2):
         v1_x = joint1.x - joint0.x
@@ -326,7 +338,6 @@ class stamina(object):
 
             if self.login_flag == 1:
 
-                print(self.time)
                 if self.up_flag == 0:
                     self.draw_ui("上肢力量评估")
                     self.draw_time(self.time)
@@ -334,7 +345,6 @@ class stamina(object):
                     self.time = 5 * 60
                     self.up_flag = 1
                     self.data["up"] = self.counts
-
                 elif self.guide_flag ==  0:
                     self.guide()
                     self.guide_flag = 1
@@ -347,10 +357,9 @@ class stamina(object):
                     self.data["down"] = self.counts
 
             if self.down_flag == 1:
-                self.render_result()
+                self.render_result(self.data)
+
             rect = (740, 0, int(1080/2), int(1920/2))
-
-
             surface_to_draw = pygame.Surface.subsurface(self._frame_surface, rect)
             surface_to_draw = pygame.transform.scale(surface_to_draw, (int(2160/self.n),int(3840/self.n)))
             self.screen.blit(surface_to_draw, (0, 0))
