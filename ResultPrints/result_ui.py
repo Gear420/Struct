@@ -18,6 +18,7 @@ class result(object):
         self.little_font = pygame.font.SysFont("SimHei",17)
         self.title_font = pygame.font.SysFont("SimHei",42)
         self.dig_font = pygame.font.Font("dig.TTF",41)
+        self.big_dig_font =pygame.font.Font("dig.TTF",25)
     def render(self):
         self._background_surface = pygame.image.load("images/result_background.png")
 
@@ -104,6 +105,9 @@ class result(object):
                                  (61+740, 672))
 
 
+        self.surface.bilt(self.big_font.render("BMI=" ,True ,(0,199,140)),(64+740,433))
+
+        self.surface.bilt(self.big_dig_font.render("27.1%", True,(0,199,140)),(100+740,433))
 
 
 

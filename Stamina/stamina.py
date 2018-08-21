@@ -164,13 +164,13 @@ class stamina(object):
                                  (int(266/375*540 + 730),int(634/667 * 960 - 120)))
 
     def render_face(self):
-        self._frame_surface.set_clip(740,0,1280,200)
+        self._frame_surface.set_clip(740, 0, 540, 200)
         self._frame_surface.fill((0,0,0))
-        self._frame_surface.set_clip(740,200,940,760)
+        self._frame_surface.set_clip(740, 200, 200, 200)
         self._frame_surface.fill((0,0,0))
-        self._frame_surface.set_clip(1080,200,1280,760)
+        self._frame_surface.set_clip(1080,200, 200, 200)
         self._frame_surface.fill((0,0,0))
-        self._frame_surface.set_clip(740,760,1280,960)
+        self._frame_surface.set_clip(740, 760, 540, 560)
         self._frame_surface.fill((0,0,0))
         self._frame_surface.set_clip()
 
@@ -183,7 +183,6 @@ class stamina(object):
         self._frame_surface.blit(self.home,(1240,0))
         self._frame_surface.blit(self.loop,(940,500))
         self._frame_surface.blit(self.go,(1080,500))
-
 
 
     def draw_color_frame(self, frame, target_surface):
@@ -307,12 +306,11 @@ class stamina(object):
 
     def run(self):
         while not self._done:
-            # --- Main event loop
-            for event in pygame.event.get():  # User did something
-                if event.type == pygame.QUIT:  # If user clicked close
-                    self._done = True  # Flag that we are done so we exit this loop
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    self._done = True
 
-                elif event.type == pygame.VIDEORESIZE:  # window resized
+                elif event.type == pygame.VIDEORESIZE:
                     self._screen = pygame.display.set_mode(event.dict['size'],
                                                            pygame.HWSURFACE | pygame.DOUBLEBUF | pygame.RESIZABLE, 32)
 
@@ -331,12 +329,19 @@ class stamina(object):
                 if self.login_flag == 0:
                     pygame.image.save(self._frame_surface,"login.png")
                     if self.facereg():
+                        rect = (940,200,140,200)
+
+                        self._frame_surface.set_clip(rect)
+
+                        self._frame_surface.set_alpha(100)
+
+                        self._frame_surface.set_clip()
+
+                        self._frame_surface.blit(self.font.render("已完成...", True, (250, 202, 46, 0.3)),
+                                                 (980,200))
+
                         self.login_flag = 1
-
-
-
             if self.login_flag == 1:
-
                 if self.up_flag == 0:
                     self.draw_ui("上肢力量评估")
                     self.draw_time(self.time)

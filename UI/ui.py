@@ -54,7 +54,7 @@ class ui(object):
         self.zhidao_image = pygame.transform.smoothscale(self.zhidao_image,(int(168 * 5.76 / self.n),int(259 * 5.76 / self.n)))
         self.zh = (16*self.SCREEN_WIDTH)/375
         self.zz = (189*self.SCREEN_HEIGHT)/667
-        #self.zhidao_image = scale(self.zhidao_image,(self.zh,self.zz))
+
 
         self.display_surface.blit(self.zhidao_image,(self.zh,self.zz))
 
