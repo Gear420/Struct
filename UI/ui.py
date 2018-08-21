@@ -3,11 +3,9 @@ from sys import exit
 #from KinectTools import PyKinectRuntime
 #from KinectTools import PyKinectV2
 import ctypes
-#from Stamina.stamina import stamina
+from Stamina.stamina import stamina
 from faceRecognition.Login import login
 from faceRecognition.Signup import signup
-from image import Image
-from button import Button
 from utils.utils import scale
 from utils.utils import choose,click
 
@@ -17,15 +15,15 @@ from utils.utils import choose,click
 
 class ui(object):
     def __init__(self,n):
-        self.SCREEN_WIDTH= 2160 /n
-        self.SCREEN_HEIGHT= 3840 / n
+        self.SCREEN_WIDTH= int(2160 / n)
+        self.SCREEN_HEIGHT= int(3840 / n)
         self.n = n
         self.start_flag = 0
 
 
         pygame.init()
         self._clock = pygame.time.Clock()
-        self.screen = pygame.display.set_mode((self.SCREEN_WIDTH, self.SCREEN_HEIGHT),pygame.HWSURFACE | pygame.DOUBLEBUF ,32)
+        self.screen = pygame.display.set_mode((self.SCREEN_WIDTH, self.SCREEN_HEIGHT),pygame.HWSURFACE | pygame.DOUBLEBUF | pygame.RESIZABLE,32)
         self.display_surface = pygame.Surface((self.SCREEN_WIDTH,self.SCREEN_HEIGHT))
         pygame.display.set_caption('v0.1')
 
@@ -109,6 +107,8 @@ class ui(object):
         # self.baogao_image = pygame.transform.scale(self.baogao_image,(width,height))
         # self.screen.blit(self.baogao_image,[192/375 * self.SCREEN_WIDTH,361/667 *self.SCREEN_HEIGHT])
         #
+
+
         self.logo_image = pygame.image.load('images/logo2.png')
         self.logo_image = pygame.transform.smoothscale(self.logo_image,
                                                          (int(82 * 5.76 / self.n), int(74 * 5.76 / self.n)))
@@ -129,6 +129,7 @@ class ui(object):
         # self.menu = pygame.transform.scale(self.menu,(mwidth,mheight))
         # self.display_surface.blit(self.menu,[0,0])
     def change_mode(self):
+        return 2
         if click(self.pinggu_image,(self.ph,self.pz)):
             print("into2")
             return 2
@@ -141,7 +142,7 @@ class ui(object):
         while True:
 
             for event in pygame.event.get():
-                #print(event)
+
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     exit()
@@ -152,6 +153,8 @@ class ui(object):
                 if self.change_mode() == 2:
                     print("kinect work!")
                     self.start_flag = 1
+
+
 
             # press = pygame.mouse.get_pressed()
             # if press ==  (1,0,0):
@@ -165,9 +168,9 @@ class ui(object):
 
 
             if self.start_flag == 1:
-                pass
-                # c = stamina(self.screen,self.n)
-                # c.run()
+
+                c = stamina(self.screen,self.n)
+                c.run()
 
             #
             # for event in pygame.event.get():

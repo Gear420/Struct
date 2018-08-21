@@ -44,6 +44,9 @@ class stamina(object):
         self.up_flag = 0
         self.login_flag = 0
         self.down_flag = 0
+        self._3d_build_flag=0
+        self.dynamic_assessment_flag= 0
+
 
         #about fonts
         self.font = pygame.font.SysFont("SimHei",28)
@@ -55,7 +58,7 @@ class stamina(object):
 
         #about time
         self._clock = pygame.time.Clock()
-        self.time = 5 * 60
+        self.time = 30 * 60
 
         #about kinect
         self._kinect = PyKinectRuntime.PyKinectRuntime(
@@ -151,11 +154,11 @@ class stamina(object):
 
     def draw_ui(self,str):
 
-        self._frame_surface.set_clip(740, 821, 740, 960)
+        self._frame_surface.set_clip(740, 820, 540, 140)
         self._frame_surface.fill((30,30,30))
         self._frame_surface.set_clip()
         self._frame_surface.blit(self.font.render(str, True, (250, 202, 46, 0.3)),
-                                 (int(266/375*540 + 695), int(634/667 * 960)))
+                                 (int(266/375*540+695), int(634/667 * 960)))
     def draw_time(self,time):
         time = time / 60
         time = (int)(time)
@@ -169,16 +172,16 @@ class stamina(object):
         pass
     def _3d_build(self):
         pass
-
+wq
 
     def render_face(self):
-        self._frame_surface.set_clip(740, 0, 540, 200)
+        self._frame_surface.set_clip((740, 0, 540, 200))
         self._frame_surface.fill((0,0,0))
-        self._frame_surface.set_clip(740, 200, 200, 200)
+        self._frame_surface.set_clip((740, 200, 200, 200))
         self._frame_surface.fill((0,0,0))
-        self._frame_surface.set_clip(1080,200, 200, 200)
+        self._frame_surface.set_clip((1080,200, 200, 200))
         self._frame_surface.fill((0,0,0))
-        self._frame_surface.set_clip(740, 760, 540, 560)
+        self._frame_surface.set_clip((740, 760, 540, 560))
         self._frame_surface.fill((0,0,0))
         self._frame_surface.set_clip()
 
@@ -188,8 +191,8 @@ class stamina(object):
         self.loop = pygame.image.load("images/loop.png")
 
         self._frame_surface.blit(self.back,(740,0))
-        self._frame_surface.blit(self.home,(1240,0))
-        self._frame_surface.blit(self.loop,(940,500))
+        self._frame_surface.blit(self.home,(1200,0))
+        self._frame_surface.blit(self.loop,(900,500))
         self._frame_surface.blit(self.go,(1080,500))
 
 
@@ -201,8 +204,8 @@ class stamina(object):
         target_surface.unlock()
 
 
-    def render_result(data):
-        a = result(data)
+    def render_result(self,data):
+        a = result(data,self._frame_surface)
         a.render()
 
     def calc_angel(self,joint0,joint1,joint2):
@@ -231,7 +234,7 @@ class stamina(object):
 
     def draw_angel_text(self,joint0,joint1,joint2,jointr0,jointr1,jointr2):
         angell = self.calc_angel(joint0,joint1,joint2)
-        angell = (int)(angell)
+        angell = int(angell)
         angell = angell - 80
         if angell > 85:
             angell = (str)(angell)
@@ -241,7 +244,7 @@ class stamina(object):
             self._frame_surface.blit(self.dig_font.render(angell,True,(255,255,255)),(joint1.x,joint1.y))
 
         angelr = self.calc_angel(jointr0,jointr1,jointr2)
-        angelr = (int)(angelr)
+        angelr = int(angelr)
         angelr = angelr - 80
         if angelr > 85:
             angelr = (str)(angelr)
@@ -254,7 +257,6 @@ class stamina(object):
 
 
     def facereg(self):
-        time.sleep(10)
         return True
     def runc(self):
         if self._bodies is not None:
@@ -284,7 +286,6 @@ class stamina(object):
 
 
     def rund(self):
-        # --- draw skeletons to _frame_surface
         if self._bodies is not None:
             for i in range(0, self._kinect.max_body_count):
                 body = self._bodies.bodies[i]
@@ -292,7 +293,6 @@ class stamina(object):
                     continue
 
                 joints = body.joints
-                # convert joint coordinates to color space
                 joint_points = self._kinect.body_joints_to_color_space(joints)
                 self.draw_body(joints, joint_points, self.SKELETON_COLORS[i])
                 self.draw_angel_text(joint_points[PyKinectV2.JointType_SpineShoulder],
@@ -330,6 +330,7 @@ class stamina(object):
                 frame = None
 
             if self.login_flag == 0:
+                print("set login!")
                 self.render_face()
 
             if self._kinect.has_new_body_frame():
@@ -337,36 +338,35 @@ class stamina(object):
                 if self.login_flag == 0:
                     pygame.image.save(self._frame_surface,"login.png")
                     if self.facereg():
-                        rect = (940,200,140,200)
-
-                        self._frame_surface.set_clip(rect)
-
-                        self._frame_surface.set_alpha(100)
-
-                        self._frame_surface.set_clip()
-
+                        print("face reg success!")
                         self._frame_surface.blit(self.font.render("已完成...", True, (250, 202, 46, 0.3)),
                                                  (980,200))
-
                         self.login_flag = 1
             if self.login_flag == 1:
                 if self.up_flag == 0:
+                    print("up...into")
                     self.draw_ui("上肢力量评估")
                     self.draw_time(self.time)
                     self.rund()
-                    self.time = 5 * 60
-                    self.up_flag = 1
-                    self.data["up"] = self.counts
+                    if self.time == 0:
+                        self.up_flag = 1
+                        self.data["up"] = self.counts
+                        self.time = 10 * 60
                 elif self.guide_flag ==  0:
+                    print("guide into")
                     self.guide()
                     self.guide_flag = 1
-                    self.time = 30 * 60
+                    if self.time == 0:
+                        self.guide_flag = 1
+                        self.time = 30 * 60
                 elif self.down_flag == 0:
+                    print("down into")
                     self.draw_ui("下肢力量评估")
                     self.draw_time(self.time)
                     self.runc()
-                    self.down_flag = 1
-                    self.data["down"] = self.counts
+                    if self.time == 0:
+                        self.down_flag = 1
+                        self.data["down"] = self.counts
 
             if self.down_flag == 1:
 
@@ -374,7 +374,7 @@ class stamina(object):
 
             rect = (740, 0, int(1080/2), int(1920/2))
             surface_to_draw = pygame.Surface.subsurface(self._frame_surface, rect)
-            surface_to_draw = pygame.transform.scale(surface_to_draw, (int(2160/self.n),int(3840/self.n)))
+            surface_to_draw = pygame.transform.smoothscale(surface_to_draw, (int(2160/self.n),int(3840/self.n)))
             self.screen.blit(surface_to_draw, (0, 0))
             surface_to_draw = None
 

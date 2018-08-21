@@ -70,12 +70,10 @@ def scale(image,position):
         return image
 def click(image,position):
     point_x, point_y = pygame.mouse.get_pos()
-    #print(point_x)
-    #print(point_y)
+
+
     x, y = position
     w, h = image.get_size()
-    #print(w)
-    #print(h)
 
     in_x = x - w / 2 < point_x < x + w / 2
     in_y = y - h / 2 < point_y < y + h / 2

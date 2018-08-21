@@ -14,7 +14,7 @@ class signup(object):
         rep = requests.post(api_url)
         result = rep.json()
 
-        print result["facesets"][0]["faceset_token"]
+        print(result["facesets"][0]["faceset_token"])
         return result["facesets"][0]["faceset_token"]
 
     def addFacetoSet(self,FacesetToken, Face_token):
@@ -25,7 +25,7 @@ class signup(object):
                   "face_tokens=" + Face_token
         rep = requests.post(api_url)
         result = rep.json()
-        print result
+        print(result)
 
     def signup(self):
         self.addFacetoSet(self.getFaceSet(),self.face_token)

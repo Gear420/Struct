@@ -18,7 +18,7 @@ class login(object):
     def login(self):
         rep = requests.post(self.api_url)
         result = rep.json()
-        print "置信度:"
+        print("置信度:")
         con = result["results"][0]["confidence"]
         if con > 80:
             return True
