@@ -163,6 +163,14 @@ class stamina(object):
         self._frame_surface.blit(self.dig_font.render(time , True, (250,202,46,0.3)),
                                  (int(266/375*540 + 730),int(634/667 * 960 - 120)))
 
+
+
+    def dynamic_assessment(self):
+        pass
+    def _3d_build(self):
+        pass
+
+
     def render_face(self):
         self._frame_surface.set_clip(740, 0, 540, 200)
         self._frame_surface.fill((0,0,0))
@@ -361,6 +369,7 @@ class stamina(object):
                     self.data["down"] = self.counts
 
             if self.down_flag == 1:
+
                 self.render_result(self.data)
 
             rect = (740, 0, int(1080/2), int(1920/2))
