@@ -46,7 +46,7 @@ class stamina(object):
         self.down_flag = 0
         self._3d_build_flag=0
         self.dynamic_assessment_flag= 0
-
+        self.save_flag =0
 
         #about fonts
         self.font = pygame.font.SysFont("SimHei",28)
@@ -172,7 +172,7 @@ class stamina(object):
         pass
     def _3d_build(self):
         pass
-wq
+
 
     def render_face(self):
         self._frame_surface.set_clip((740, 0, 540, 200))
@@ -329,37 +329,41 @@ wq
                 self.draw_color_frame(frame, self._frame_surface)
                 frame = None
 
-            if self.login_flag == 0:
-                print("set login!")
-                self.render_face()
+
 
             if self._kinect.has_new_body_frame():
                 self._bodies = self._kinect.get_last_body_frame()
                 if self.login_flag == 0:
-                    pygame.image.save(self._frame_surface,"login.png")
+                    print("set login!")
+                    if self.save_flag == 0:
+                        pygame.image.save(self._frame_surface,"login.png")
+                        self.save_flag = 1
+                    self.render_face()
                     if self.facereg():
                         print("face reg success!")
                         self._frame_surface.blit(self.font.render("已完成...", True, (250, 202, 46, 0.3)),
-                                                 (980,200))
-                        self.login_flag = 1
+                                                 (980,500))
+                        self.time = self.time - 1
+                        if self.time == 0:
+                            self.login_flag = 1
             if self.login_flag == 1:
                 if self.up_flag == 0:
-                    print("up...into")
+                    print("into up")
                     self.draw_ui("上肢力量评估")
                     self.draw_time(self.time)
                     self.rund()
                     if self.time == 0:
                         self.up_flag = 1
                         self.data["up"] = self.counts
-                        self.time = 10 * 60
-                elif self.guide_flag ==  0:
+                        self.time = 30 * 60
+                elif self.guide_flag ==  0 and self.up_flag == 1:
                     print("guide into")
                     self.guide()
                     self.guide_flag = 1
                     if self.time == 0:
                         self.guide_flag = 1
                         self.time = 30 * 60
-                elif self.down_flag == 0:
+                elif self.guide_flag == 1 and self.up_flag == 1:
                     print("down into")
                     self.draw_ui("下肢力量评估")
                     self.draw_time(self.time)
@@ -369,8 +373,8 @@ wq
                         self.data["down"] = self.counts
 
             if self.down_flag == 1:
-
                 self.render_result(self.data)
+
 
             rect = (740, 0, int(1080/2), int(1920/2))
             surface_to_draw = pygame.Surface.subsurface(self._frame_surface, rect)

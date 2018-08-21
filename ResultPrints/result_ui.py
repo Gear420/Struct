@@ -24,7 +24,7 @@ class result(object):
     def render(self):
         self._background_surface = pygame.image.load("images/result_background.png")
 
-        self.surface.blit(self._background_surface,(770,40))
+        self.surface.blit(self._background_surface,(750,20))
 
         self.circle = pygame.image.load("images/circle1.png")
 
@@ -111,7 +111,8 @@ class result(object):
 
         self.surface.blit(self.big_dig_font.render("27.1%", True,(0,199,140)),(100+740,433))
 
-
+        button_red = pygame.image.load("images/rect_red.png")
+        button_green = pygame.image.load("images/rect_green.png")
 
 
 
