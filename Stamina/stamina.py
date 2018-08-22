@@ -1,5 +1,4 @@
 #coding=utf-8
-
 from KinectTools import PyKinectV2
 from KinectTools.PyKinectV2 import *
 from KinectTools import PyKinectRuntime
@@ -36,10 +35,8 @@ class stamina(object):
         self.n = n
         self._done = False
 
-
         self.status=0
         self.counts = 0
-
         self.guide_flag = 0
         self.up_flag = 0
         self.login_flag = 0
@@ -47,8 +44,9 @@ class stamina(object):
         self._3d_build_flag=0
         self.dynamic_assessment_flag= 0
         self.save_flag =0
+        self.sucess_flag = 0
 
-        #about fonts
+
         self.font = pygame.font.SysFont("SimHei",28)
         self.eng_font = pygame.font.SysFont("consolas",30)
         self.dig_font = pygame.font.Font("dig.TTF",105)
@@ -58,7 +56,7 @@ class stamina(object):
 
         #about time
         self._clock = pygame.time.Clock()
-        self.time = 30 * 60
+        self.time =  30 * 60
 
         #about kinect
         self._kinect = PyKinectRuntime.PyKinectRuntime(
@@ -172,8 +170,6 @@ class stamina(object):
         pass
     def _3d_build(self):
         pass
-
-
     def render_face(self):
         self._frame_surface.set_clip((740, 0, 540, 200))
         self._frame_surface.fill((0,0,0))
@@ -181,7 +177,7 @@ class stamina(object):
         self._frame_surface.fill((0,0,0))
         self._frame_surface.set_clip((1080,200, 200, 200))
         self._frame_surface.fill((0,0,0))
-        self._frame_surface.set_clip((740, 760, 540, 560))
+        self._frame_surface.set_clip((740,400, 540, 560))
         self._frame_surface.fill((0,0,0))
         self._frame_surface.set_clip()
 
@@ -310,7 +306,9 @@ class stamina(object):
                                       joint_points[PyKinectV2.JointType_ElbowLeft])
     def guide(self):
         self._frame_surface.set_clip()
-        self._frame_surface.fill((255,255,255))
+        self._frame_surface.fill((0,0,0))
+        self._frame_surface.blit(self.font.render("请等待五秒进入下一个动作",True,(225,225,225)),(790,200))
+
 
     def run(self):
         while not self._done:
@@ -329,41 +327,50 @@ class stamina(object):
                 self.draw_color_frame(frame, self._frame_surface)
                 frame = None
 
-
-
+#            if self.login_flag == 0:
+                self.render_face()
             if self._kinect.has_new_body_frame():
                 self._bodies = self._kinect.get_last_body_frame()
-                if self.login_flag == 0:
-                    print("set login!")
-                    if self.save_flag == 0:
-                        pygame.image.save(self._frame_surface,"login.png")
-                        self.save_flag = 1
-                    self.render_face()
-                    if self.facereg():
-                        print("face reg success!")
-                        self._frame_surface.blit(self.font.render("已完成...", True, (250, 202, 46, 0.3)),
-                                                 (980,500))
-                        self.time = self.time - 1
-                        if self.time == 0:
-                            self.login_flag = 1
+#                if self.login_flag == 0:
+#                    print("set login!")
+#                     if self.save_flag <= 0:
+#                         pygame.image.save(self._frame_surface,"login.png")
+#                         self.save_flag = 1
+#
+#                     if self.facereg():
+#                         print("face reg success!")
+#                         self.sucess_flag = 1
+#                         print(self.time)
+#                         if self.time <= 0:
+#                             self.login_flag = 1
+#                             self.time = 5 * 60
+            if self.sucess_flag == 1:
+                self._frame_surface.blit(self.font.render("已完成验证,请点击下一步。", True, (250, 202, 46, 0.3)),
+                                         (980, 500))
+                if self.time <= 0:
+                    self.sucess_flag = 0
+                    self.time = 30*60
             if self.login_flag == 1:
-                if self.up_flag == 0:
+                if self.up_flag == 0 and self.guide_flag == 0 and self.down_flag == 0:
+                    print(self.time)
                     print("into up")
                     self.draw_ui("上肢力量评估")
                     self.draw_time(self.time)
                     self.rund()
-                    if self.time == 0:
+                    if self.time <= 0:
                         self.up_flag = 1
                         self.data["up"] = self.counts
-                        self.time = 30 * 60
-                elif self.guide_flag ==  0 and self.up_flag == 1:
+                        self.time = 5 * 60
+                elif self.guide_flag ==  0 and self.up_flag == 1 and self.down_flag == 0:
+                    print(self.time)
                     print("guide into")
                     self.guide()
                     self.guide_flag = 1
-                    if self.time == 0:
+                    if self.time <= 0:
                         self.guide_flag = 1
                         self.time = 30 * 60
-                elif self.guide_flag == 1 and self.up_flag == 1:
+                else:
+                    print(self.time)
                     print("down into")
                     self.draw_ui("下肢力量评估")
                     self.draw_time(self.time)

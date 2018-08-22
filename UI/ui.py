@@ -171,7 +171,7 @@ class ui(object):
 
                 c = stamina(self.screen,self.n)
                 c.run()
-
+                print("kinect one frame ends")
             #
             # for event in pygame.event.get():
             #     if event.type == pygame.eventMOUSEBUTTONDOWN;
