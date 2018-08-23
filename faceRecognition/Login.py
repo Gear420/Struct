@@ -5,7 +5,7 @@ from faceRecognition.Signup import signup
 from utils.utils import detect,logintobase64
 
 class login(object):
-    def __init__(self, face_token, faceset_token):
+    def __init__(self):
         face_token = detect(logintobase64())
         faceset_token = signup().getFaceSet()
         self.face_token = face_token

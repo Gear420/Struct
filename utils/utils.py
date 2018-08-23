@@ -11,7 +11,7 @@ def signuptobase64():
     ls_f=base64.b64encode(f.read()) #读取文件内容，转换为base64编码
     return ls_f
 def logintobase64():
-    f = open(r'../Images/login.jpg', 'rb')  # 二进制方式打开图文件
+    f = open(r'login.jpg','rb')  # 二进制方式打开图文件
     ls_f = base64.b64encode(f.read())  # 读取文件内容，转换为base64编码
     return ls_f
 
@@ -70,11 +70,8 @@ def scale(image,position):
         return image
 def click(image,position):
     point_x, point_y = pygame.mouse.get_pos()
-
-
     x, y = position
     w, h = image.get_size()
-
     in_x = x - w / 2 < point_x < x + w / 2
     in_y = y - h / 2 < point_y < y + h / 2
     if in_x and in_y:
@@ -84,7 +81,8 @@ def click(image,position):
             return True
         else:
             return False
-    return False
+    else:
+        return False
 
 def choose(image,position):
     point_x, point_y = pygame.mouse.get_pos()
